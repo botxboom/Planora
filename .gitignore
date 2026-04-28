@@ -1,0 +1,56 @@
+# --- Python ---
+.venv/
+venv/
+.env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+*.log
+
+# --- Env / secrets (keep *.example templates) ---
+.env
+.env.local
+web/.env.local
+
+# --- Local SQLite (runtime DB; path from PLANORA_DB_PATH) ---
+data/*.db
+data/*.db-journal
+data/*.sqlite3
+
+# --- Node / Next.js (web app) ---
+web/node_modules/
+web/.next/
+web/out/
+web/.turbo/
+web/.vercel
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.pnpm-debug.log*
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Editors / IDE ---
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Misc ---
+*.bak
+.cache/
