@@ -1,5 +1,14 @@
 # Planora: Autonomous Travel Planning Agent
 
+<img width="1507" height="743" alt="Screenshot 2026-04-28 at 10 29 05 AM" src="https://github.com/user-attachments/assets/a059beec-551e-45d3-aec6-fce77832acd9" />
+
+<img width="1508" height="824" alt="Screenshot 2026-04-28 at 10 29 17 AM" src="https://github.com/user-attachments/assets/f03d0f46-5fda-4390-a7ac-3a0f6de6fb17" />
+
+<img width="1507" height="825" alt="Screenshot 2026-04-28 at 10 29 29 AM" src="https://github.com/user-attachments/assets/017ee496-9850-4f92-beff-953e72a1c794" />
+
+
+
+
 Planora is a LangGraph-based autonomous travel planning system with:
 
 - planner + specialized tool-calling agents,
