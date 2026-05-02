@@ -205,13 +205,17 @@ def test_graph_executes_and_returns_structured_output(
 
 
 def test_low_judge_score_triggers_bounded_refinements(
-    mock_structured_agent_runner: None, mock_judge_low_score: None
+    mock_structured_agent_runner: None, mock_judge_low_score: None, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setenv("PLANORA_MAX_REFINEMENT_LOOPS", "1")
+    from config.settings import get_settings
+
+    get_settings.cache_clear()
     graph = build_travel_graph()
     result = graph.invoke({"query": SAMPLE_QUERY, "metadata": {}})
 
     assert result["judge_output"].score == 5
-    assert result["refinement_count"] == 2
+    assert result["refinement_count"] == 1
     assert result["retry_target"] == "optimizer_agent"
     assert result["final_itinerary"].budget_summary["refinement_applied"] is True
     assert any(

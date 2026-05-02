@@ -27,9 +27,10 @@ Planora is a LangGraph-based autonomous travel planning system with:
    - set `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`
 4. Run tests:
    - `pytest`
-5. (Optional) Run the graph once from the CLI and print JSON:
+5. **Latency (optional env):** set `ANTHROPIC_MODEL_AGENTS` (e.g. Haiku) for specialists, `PLANORA_MAX_REFINEMENT_LOOPS=0|1`, `PLANORA_SKIP_WEB_SEARCH=true` to skip Tavily — see `.env.example`.
+6. (Optional) Run the graph once from the CLI and print JSON:
    - `python -m agent.run_graph --query "Plan a 4-day trip to Goa under ₹25,000"`
-6. Run backend:
+7. Run backend:
    - `uvicorn backend.main:app --reload`
 
 ### Backend API

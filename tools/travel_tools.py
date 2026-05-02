@@ -4,11 +4,18 @@ from __future__ import annotations
 
 import json
 import os
+import threading
+import time
 import urllib.error
 import urllib.request
 from typing import Any
 
 from langchain_core.tools import tool
+
+from config.settings import get_settings
+
+_web_search_cache: dict[str, tuple[float, dict[str, Any]]] = {}
+_web_search_lock = threading.Lock()
 
 _PLACE_DB: dict[str, list[dict[str, Any]]] = {
     "goa food": [
@@ -88,6 +95,10 @@ def estimate_costs(data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _web_search_cache_key(query: str) -> str:
+    return query.strip().lower()[:512]
+
+
 @tool
 def web_search_travel(query: str) -> dict[str, Any]:
     """Search the web for travel facts (local transport, routes, realistic tips).
@@ -95,6 +106,31 @@ def web_search_travel(query: str) -> dict[str, Any]:
     Prefer this when the destination's on-the-ground transport or venue details are uncertain.
     Returns short snippets with URLs when `TAVILY_API_KEY` is set; otherwise a clear disabled notice.
     """
+
+    settings = get_settings()
+    if settings.skip_web_search:
+        return {
+            "ok": False,
+            "query": query,
+            "skipped": True,
+            "message": (
+                "Web search disabled via PLANORA_SKIP_WEB_SEARCH. "
+                "Use search_places, get_distance, and conservative estimates."
+            ),
+        }
+
+    ttl = int(settings.web_search_cache_ttl_seconds)
+    cache_key = _web_search_cache_key(query)
+    if ttl > 0:
+        now = time.monotonic()
+        with _web_search_lock:
+            hit = _web_search_cache.get(cache_key)
+        if hit is not None:
+            ts, payload = hit
+            if now - ts < ttl:
+                merged = dict(payload)
+                merged["cached"] = True
+                return merged
 
     api_key = os.environ.get("TAVILY_API_KEY", "").strip()
     if not api_key:
@@ -138,7 +174,11 @@ def web_search_travel(query: str) -> dict[str, Any]:
                 "content": str(row.get("content") or "")[:700],
             }
         )
-    return {"ok": True, "query": query, "answer": data.get("answer"), "results": snippets}
+    out: dict[str, Any] = {"ok": True, "query": query, "answer": data.get("answer"), "results": snippets}
+    if ttl > 0:
+        with _web_search_lock:
+            _web_search_cache[cache_key] = (time.monotonic(), dict(out))
+    return out
 
 
 @tool

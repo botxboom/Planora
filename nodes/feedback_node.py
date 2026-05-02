@@ -42,6 +42,7 @@ def feedback_node(state: TravelGraphState) -> TravelGraphState:
     refined_itinerary = FinalItinerary(
         destination=final_itinerary.destination,
         duration_days=final_itinerary.duration_days,
+        arrival_summary=final_itinerary.arrival_summary,
         daily_plan=final_itinerary.daily_plan,
         budget_summary=budget_summary,
         optimization_notes=notes,

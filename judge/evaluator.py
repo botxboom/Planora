@@ -5,13 +5,13 @@ from __future__ import annotations
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from agent.schemas import FinalItinerary, JudgeOutput, PlannerOutput
-from config.llm import get_anthropic_llm
+from config.llm import get_judge_llm
 
 
 def evaluate_itinerary(*, planner_output: PlannerOutput, itinerary: FinalItinerary) -> JudgeOutput:
     """Evaluate itinerary quality using Anthropic structured output."""
 
-    llm = get_anthropic_llm(temperature=0)
+    llm = get_judge_llm(temperature=0)
     structured_llm = llm.with_structured_output(JudgeOutput)
 
     messages = [
@@ -27,9 +27,9 @@ def evaluate_itinerary(*, planner_output: PlannerOutput, itinerary: FinalItinera
         HumanMessage(
             content=(
                 "Planner constraints:\n"
-                f"{planner_output.model_dump_json(indent=2)}\n\n"
+                f"{planner_output.model_dump_json(exclude_none=True)}\n\n"
                 "Generated itinerary:\n"
-                f"{itinerary.model_dump_json(indent=2)}\n\n"
+                f"{itinerary.model_dump_json(exclude_none=True)}\n\n"
                 "Penalize missing daily coverage, unrealistic costs, and excessive transit."
             )
         ),
